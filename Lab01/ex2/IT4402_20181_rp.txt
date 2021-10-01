@@ -1,0 +1,10 @@
+The student with the highest mark is: Nguyen Yen Chi
+The student with the lowest mark is: Luong Duc
+The average mark is: 6.92
+
+A histogram of the subject IT4402 is:
+A:**
+B:**
+C:*
+D:
+F:*

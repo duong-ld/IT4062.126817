@@ -1,0 +1,11 @@
+SubjectID|IT4402
+Subject|Computer Sciene
+F|30|70
+Semester|20181
+StudentCount|6
+S|20180005|Luong|A|5.0|6.0|C|
+S|20180002|Le Minh|Ba|3.4|8.9|B|
+S|20180001|Le Minh|An|6.5|8.0|B|
+S|20180057|Luong Duc|Duong|10.0|8.0|A|
+S|20184049|Nguyen Yen|Chi|7.0|9.5|A|
+S|20180045|Luong|Duc|3.0|4.0|F|

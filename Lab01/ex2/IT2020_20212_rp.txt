@@ -1,0 +1,10 @@
+The student with the highest mark is: Luong SDAS
+The student with the lowest mark is: Luong ASDA
+The average mark is: 5.55
+
+A histogram of the subject IT2020 is:
+A:
+B:*
+C:*
+D:
+F:*

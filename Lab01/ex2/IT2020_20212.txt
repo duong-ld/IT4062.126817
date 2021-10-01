@@ -1,0 +1,8 @@
+SubjectID|IT2020
+Subject|Computer Moniter
+F|34|66
+Semester|20212
+StudentCount|3
+S|20170056|Luong|ÁDEF|5.0|6.0|C|
+S|20190056|Luong|SDAS|6.0|8.0|B|
+S|20180057|Luong|ASDA|3.0|4.0|F|
