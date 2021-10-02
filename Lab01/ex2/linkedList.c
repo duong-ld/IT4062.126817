@@ -73,8 +73,8 @@ void printList(Node head) {
 void freeList(Node head) {
   Node tmp = head;
   head = head->next;
-  free(tmp);
   free(tmp->data);
+  free(tmp);
   if (head != NULL) {
     freeList(head);
   }
