@@ -8,6 +8,7 @@
 #ifndef _MAINFUNC_H_
 #define _MAINFUNC_H_
 
+void clearSTDIN(void);
 void addScoreBoard(void);
 void addStudentScore(void);
 void deleteStudentScore(void);

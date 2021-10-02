@@ -8,17 +8,17 @@
 #ifndef _LINKEDLIST_H_
 #define _LINKEDLIST_H_
 
-#include "studentData.h"
+#include "student.h"
 
 struct Element {
-  StudentData *data;
+  Student data;
   struct Element* next;
 };
 typedef struct Element* Node;
 
-void createList(Node* head);
-Node createNode(StudentData *data);
-void addHead(Node* head, StudentData *data);
+void initList(Node* head);
+Node createNode(Student data);
+void addHead(Node* head, Student data);
 void printList(Node head);
 int deleteNode(Node* head, char* studentID);
 StudentData* searchNode(Node head, char* studentID);

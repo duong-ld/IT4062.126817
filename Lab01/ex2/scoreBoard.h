@@ -8,10 +8,10 @@
 #ifndef _SCOREBOARD_H_
 #define _SCOREBOARD_H_
 
-#include "linkedList.h"
 #include "constain.h"
+#include "linkedList.h"
 
-typedef struct ScoreBoard {
+typedef struct ScoreBoardData {
   char subjectID[MAX_LENGTH_STUDENT_ID + 1];
   char subjectName[MAX_LENGTH_STUDENT_NAME + 1];
   int midRate;
@@ -19,8 +19,11 @@ typedef struct ScoreBoard {
   char semester[MAX_LENGTH_SEMESTER + 1];
   int numberStudent;
   Node listStudent;
-} ScoreBoard;
+} ScoreBoardData;
 
+typedef ScoreBoardData* ScoreBoard;
+
+ScoreBoard createScoreBoard(void);
 void printScoreBoard(ScoreBoard scoreBoard);
 char convertScore(double midtermScore,
                   double finaltermScore,

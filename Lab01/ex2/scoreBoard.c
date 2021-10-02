@@ -7,29 +7,41 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "scoreBoard.h"
-#include "studentData.h"
+#include "student.h"
+
+ScoreBoard createScoreBoard(void) {
+  ScoreBoard scoreBoard = (ScoreBoard)malloc(sizeof(ScoreBoardData));
+  if (scoreBoard == NULL) {
+    printf("Error: Cannot allocate memory for scoreBoard\n");
+    exit(1);
+  }
+  scoreBoard->listStudent = NULL;
+  return scoreBoard;
+}
 
 void printScoreBoard(ScoreBoard scoreBoard) {
-  printf("SubjectID|%s\n", scoreBoard.subjectID);
-  printf("%s\n", scoreBoard.subjectName);
-  printf("F|%d|%d\n", scoreBoard.midRate, scoreBoard.finalRate);
-  printf("%s\n", scoreBoard.semester);
-  printf("StudentCount|%d\n", scoreBoard.numberStudent);
+  printf("SubjectID|%s\n", scoreBoard->subjectID);
+  printf("%s\n", scoreBoard->subjectName);
+  printf("F|%d|%d\n", scoreBoard->midRate, scoreBoard->finalRate);
+  printf("%s\n", scoreBoard->semester);
+  printf("StudentCount|%d\n", scoreBoard->numberStudent);
 
-  Node tmp = scoreBoard.listStudent;
+  Node tmp = scoreBoard->listStudent;
   while (tmp != NULL) {
-    printStudentData(*(tmp->data));
+    printStudentData(tmp->data);
     tmp = tmp->next;
   }
 }
 
 double calulateScore(double midtermScore,
-                  double finaltermScore,
-                  int midrate,
-                  int finalrate) {
-  return (midrate * midtermScore + finalrate * finaltermScore) / 100;
+                     double finaltermScore,
+                     int midrate,
+                     int finalrate) {
+  return (midrate * midtermScore + finalrate * finaltermScore) /
+         (midrate + finalrate);
 }
 
 char convertScore(double midtermScore,
@@ -57,5 +69,8 @@ char convertScore(double midtermScore,
 }
 
 void freeScoreBoard(ScoreBoard scoreBoard) {
-  freeList(scoreBoard.listStudent);
+  if (scoreBoard != NULL) {
+    freeList(scoreBoard->listStudent);
+    free(scoreBoard);
+  }
 }

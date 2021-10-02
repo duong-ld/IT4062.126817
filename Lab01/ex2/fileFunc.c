@@ -11,6 +11,7 @@
 
 #include "fileFunc.h"
 #include "linkedList.h"
+#include "mainFunc.h"
 
 // return subjectID_semester.txt
 char* makeFileName(char* subjectID, char* semester) {
@@ -35,27 +36,26 @@ char* makeReportFile(char* fileName) {
     printf("Error: malloc failed\n");
     exit(1);
   }
-  strncpy(rpFile, fileName, strlen(fileName) - 4);
+  strncpy(rpFile, fileName, strlen(fileName) - strlen(".txt"));
   strcat(rpFile, "_rp.txt");
   return rpFile;
 }
 
-char* findScoreBoard(void) {
-  char subjectID[20] = "\0";
-  char semester[20] = "\0";
+char* findScoreBoardFile(void) {
+  char subjectID[MAX_LENGTH_SUBJECT_ID + 1] = "\0";
+  char semester[MAX_LENGTH_SEMESTER + 1] = "\0";
   printf("Enter subject ID: ");
   scanf("%[^\n]s", subjectID);
-  getchar();  // clear buffer
+  clearSTDIN();
   printf("Enter semester: ");
   scanf("%[^\n]s", semester);
-  getchar();  // clear buffer
-  printf("\n");
+  clearSTDIN();
   char* fileName = makeFileName(subjectID, semester);
   return fileName;
 }
 
-StudentData* readStudentFromFile(FILE* fp) {
-  StudentData* student = (StudentData*)malloc(sizeof(StudentData));
+Student readStudentFromFile(FILE* fp) {
+  Student student = createStudent();
   // S|20180057|Luong Duc|Duong|10.0|8.0|A|
   fgetc(fp);  // get S
   fgetc(fp);  // get |
@@ -76,6 +76,7 @@ StudentData* readStudentFromFile(FILE* fp) {
 }
 
 void getStringFieldFromFile(FILE* pf, char* field) {
+  // NameField|ValueField
   fscanf(pf, "%*[^|]s");
   fgetc(pf);  // get |
   fscanf(pf, "%[^\n]s", field);
@@ -83,75 +84,85 @@ void getStringFieldFromFile(FILE* pf, char* field) {
 }
 
 ScoreBoard readScoreBoardFromFile(char* fileName) {
-  ScoreBoard scoreBoard;
-  strcpy(scoreBoard.subjectID, "NULL");
+  ScoreBoard scoreBoard = createScoreBoard();
 
   FILE* pf = fopen(fileName, "r");
   if (pf == NULL) {
-    return scoreBoard;  // return scoreBoard with subjectID = NULL
+    freeScoreBoard(scoreBoard);
+    return NULL;  // return scoreBoard with subjectID = NULL
   }
-  // get subjectID
-  getStringFieldFromFile(pf, scoreBoard.subjectID);
-  // get subjectName
-  getStringFieldFromFile(pf, scoreBoard.subjectName);
+
+  getStringFieldFromFile(pf, scoreBoard->subjectID);
+  getStringFieldFromFile(pf, scoreBoard->subjectName);
+
   // get score rate
+  // F|midRate|finalRate
   fgetc(pf);  // get F
   fgetc(pf);  // get |
-  fscanf(pf, "%d", &scoreBoard.midRate);
+  fscanf(pf, "%d", &scoreBoard->midRate);
   fgetc(pf);  // get |
-  fscanf(pf, "%d", &scoreBoard.finalRate);
+  fscanf(pf, "%d", &scoreBoard->finalRate);
   fgetc(pf);  // get \n
-  // get semester
-  getStringFieldFromFile(pf, scoreBoard.semester);
+  // end get score rate
+
+  getStringFieldFromFile(pf, scoreBoard->semester);
+
   // get number of students
   fscanf(pf, "%*[^|]s");
   fgetc(pf);  // get |
-  fscanf(pf, "%d", &scoreBoard.numberStudent);
+  fscanf(pf, "%d", &scoreBoard->numberStudent);
   fgetc(pf);  // get \n
+  // end get number of students
 
-  createList(&scoreBoard.listStudent);
-
-  for (int i = 0; i < scoreBoard.numberStudent; i++) {
-    StudentData* studentTmp = readStudentFromFile(pf);
-    addHead(&scoreBoard.listStudent, studentTmp);
+  initList(&scoreBoard->listStudent);
+  for (int i = 0; i < scoreBoard->numberStudent; i++) {
+    Student studentTmp = readStudentFromFile(pf);
+    addHead(&scoreBoard->listStudent, studentTmp);
   }
 
   fclose(pf);
   return scoreBoard;
 }
 
-void printStudentToFile(FILE* pf, StudentData student) {
-  fprintf(pf, "S|%s|%s|%s|%.1lf|%.1lf|%c|\n", student.studentID,
-          student.firstName, student.lastName, student.midTermScore,
-          student.finalTermScore, student.letterGrade);
+void printStudentToFile(FILE* pf, Student student) {
+  fprintf(pf, "S|%s|%s|%s|%.1lf|%.1lf|%c|\n", student->studentID,
+          student->firstName, student->lastName, student->midTermScore,
+          student->finalTermScore, student->letterGrade);
 }
 
 void printScoreBoardToFile(ScoreBoard scoreBoard, char* fileName) {
   FILE* pf = fopen(fileName, "w");
   if (pf == NULL) {
+    freeScoreBoard(scoreBoard);
     printf("Error opening file!\n");
     exit(1);
   }
 
-  fprintf(pf, "SubjectID|%s\n", scoreBoard.subjectID);
-  fprintf(pf, "Subject|%s\n", scoreBoard.subjectName);
-  fprintf(pf, "F|%d|%d\n", scoreBoard.midRate, scoreBoard.finalRate);
-  fprintf(pf, "Semester|%s\n", scoreBoard.semester);
-  fprintf(pf, "StudentCount|%d\n", scoreBoard.numberStudent);
+  if (scoreBoard == NULL) {
+    printf("Error: scoreBoard is NULL\n");
+    return;
+  }
 
-  Node tmp = scoreBoard.listStudent;
+  fprintf(pf, "SubjectID|%s\n", scoreBoard->subjectID);
+  fprintf(pf, "Subject|%s\n", scoreBoard->subjectName);
+  fprintf(pf, "F|%d|%d\n", scoreBoard->midRate, scoreBoard->finalRate);
+  fprintf(pf, "Semester|%s\n", scoreBoard->semester);
+  fprintf(pf, "StudentCount|%d\n", scoreBoard->numberStudent);
+
+  Node tmp = scoreBoard->listStudent;
   while (tmp != NULL) {
-    printStudentToFile(pf, *(tmp->data));
+    printStudentToFile(pf, tmp->data);
     tmp = tmp->next;
   }
   fclose(pf);
 }
 
 void printHistogramToFile(ScoreBoard scoreBoard, int histogram[], FILE* pf) {
-  fprintf(pf, "A histogram of the subject %s is:\n", scoreBoard.subjectID);
+  fprintf(pf, "A histogram of the subject %s is:\n", scoreBoard->subjectID);
 
   for (int i = 0; i < 6; i++) {
-    if (i != 4) {
+    // dont have E point in histogram
+    if (i != 'E' - 'A') {
       fprintf(pf, "%c:", i + 'A');
       for (int j = 0; j < histogram[i]; j++) {
         fprintf(pf, "*");
@@ -164,22 +175,29 @@ void printHistogramToFile(ScoreBoard scoreBoard, int histogram[], FILE* pf) {
 void exportScoreSummary(ScoreBoard scoreBoard, char* fileName) {
   FILE* pf = fopen(fileName, "w");
   if (pf == NULL) {
+    freeScoreBoard(scoreBoard);
     printf("Error opening file!\n");
     exit(1);
   }
+  if (scoreBoard == NULL) {
+    printf("Error: scoreBoard is NULL\n");
+    return;
+  }
+
   StudentData maxPoint;
   double max = -100;
   StudentData minPoint;
   double min = 100;
+  // A -> F
   int histogram[6] = {0};
   double average = 0;
   double sum = 0;
   double grade = 0;  // grade of each student
 
-  Node tmp = scoreBoard.listStudent;
+  Node tmp = scoreBoard->listStudent;
   while (tmp != NULL) {
     grade = calulateScore(tmp->data->midTermScore, tmp->data->finalTermScore,
-                          scoreBoard.midRate, scoreBoard.finalRate);
+                          scoreBoard->midRate, scoreBoard->finalRate);
     sum += grade;
     if (max < grade) {
       max = grade;
@@ -192,7 +210,7 @@ void exportScoreSummary(ScoreBoard scoreBoard, char* fileName) {
     histogram[tmp->data->letterGrade - 'A']++;
     tmp = tmp->next;
   }
-  average = sum / scoreBoard.numberStudent;
+  average = sum / scoreBoard->numberStudent;
   fprintf(pf, "The student with the highest mark is: %s %s\n",
           maxPoint.firstName, maxPoint.lastName);
   fprintf(pf, "The student with the lowest mark is: %s %s\n",

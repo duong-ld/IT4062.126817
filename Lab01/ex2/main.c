@@ -11,7 +11,7 @@
 #include "mainFunc.h"
 
 int main(int argc, char const* argv[]) {
-  MENU:
+MENU:
   printf("Learning Management System\n");
   printf("----------------------------------\n");
   printf("\t1. Add a new score board\n");
@@ -22,8 +22,7 @@ int main(int argc, char const* argv[]) {
   printf("Your choice (1-5, other to quit): ");
   char choice;
   scanf("%c", &choice);
-  while (getchar() != '\n')
-    ;
+  clearSTDIN();
   switch (choice) {
     case '1':
       addScoreBoard();

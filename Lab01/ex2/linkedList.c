@@ -11,18 +11,18 @@
 
 #include "linkedList.h"
 
-void createList(Node* head) {
+void initList(Node* head) {
   *head = NULL;
 }
 
-Node createNode(StudentData* data) {
+Node createNode(Student data) {
   Node node = (Node)malloc(sizeof(Node));
   node->data = data;
   node->next = NULL;
   return node;
 }
 
-void addHead(Node* head, StudentData* data) {
+void addHead(Node* head, Student data) {
   Node node = createNode(data);
   node->next = *head;
   *head = node;
@@ -49,7 +49,7 @@ int deleteNode(Node* head, char* studentID) {
   return 0;
 }
 
-StudentData* searchNode(Node head, char* studentID) {
+Student searchNode(Node head, char* studentID) {
   Node tmp = head;
   while (tmp != NULL) {
     if (strcmp(tmp->data->studentID, studentID) == 0) {
@@ -63,19 +63,19 @@ StudentData* searchNode(Node head, char* studentID) {
 
 void printList(Node head) {
   Node temp = head;
-  printStudentData(*(temp->data));
+  printStudentData(temp->data);
   while (temp->next != NULL) {
     temp = temp->next;
-    printStudentData(*(temp->data));
+    printStudentData(temp->data);
   }
 }
 
 void freeList(Node head) {
-  Node tmp = head;
-  head = head->next;
-  free(tmp->data);
-  free(tmp);
   if (head != NULL) {
+    Node tmp = head;
+    head = head->next;
+    free(tmp->data);
+    free(tmp);
     freeList(head);
   }
 }

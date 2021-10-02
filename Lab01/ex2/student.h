@@ -10,19 +10,21 @@
 
 #include "constain.h"
 
-typedef struct StudentData StudentData;
-struct StudentData {
+typedef struct StudentData {
   char studentID[MAX_LENGTH_STUDENT_ID + 1];
   char firstName[MAX_LENGTH_STUDENT_NAME + 1];
   char lastName[MAX_LENGTH_STUDENT_NAME + 1];
   double midTermScore;
   double finalTermScore;
   char letterGrade;
-};
+} StudentData;
 
-StudentData* EnterStudentData(void);
-void printStudentData(StudentData student);
+typedef StudentData* Student;
 
-#endif /* _STUDENTDATA_H_ */
+Student createStudent(void);
+Student EnterStudentData(void);
+void printStudentData(Student student);
+
+#endif /* _STUDENT_H_ */
 
 

@@ -12,10 +12,10 @@
 
 char* makeFileName(char* subjectID, char* semester);
 char* makeReportFile(char* fileName);
-char* findScoreBoard(void);
-StudentData* readStudentFromFile(FILE* fp);
+char* findScoreBoardFile(void);
+Student readStudentFromFile(FILE* fp);
 ScoreBoard readScoreBoardFromFile(char *fileName);
-void printStudentToFile(FILE* pf, StudentData student);
+void printStudentToFile(FILE* pf, Student student);
 void printScoreBoardToFile(ScoreBoard scoreBoard, char *fileName);
 void exportScoreSummary(ScoreBoard scoreBoard, char *fileName);
 

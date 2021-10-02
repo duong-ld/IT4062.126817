@@ -8,6 +8,7 @@
 #ifndef _CONSTAIN_H_
 #define _CONSTAIN_H_
 
+
 #define MAX_LENGTH_STUDENT_ID 20
 #define MAX_LENGTH_STUDENT_NAME 50
 #define MAX_LENGTH_SUBJECT_ID 20

@@ -1,8 +1,0 @@
-SubjectID|IT1234
-Subject|Computer
-F|50|50
-Semester|20191
-StudentCount|3
-S|20180045|Le Minh|An|5.0|6.0|C|
-S|20180004|Nguyen|Chi|8.0|9.0|A|
-S|20180057|Luong Duc|Duong|4.0|10.0|B|
