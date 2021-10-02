@@ -73,8 +73,8 @@ void addStudentScore(void) {
   char* fileName = findScoreBoard();
   ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
   if (strcmp(scoreBoard.subjectID, "NULL") == 0) {
-    printf("Score Board not found!\n");
-    printf("-------------------------------------\n");
+    printf("Score Board not found!\n\n");
+    printf("----------------------------------\n");
     return;
   }
 
@@ -108,8 +108,8 @@ void deleteStudentScore(void) {
   char* fileName = findScoreBoard();
   ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
   if (strcmp(scoreBoard.subjectID, "NULL") == 0) {
-    printf("Score Board not found!\n");
-    printf("-------------------------------------\n");
+    printf("Score Board not found!\n\n");
+    printf("----------------------------------\n");
     return;
   }
 
@@ -139,8 +139,8 @@ void searchStudentScore(void) {
   char* fileName = findScoreBoard();
   ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
   if (strcmp(scoreBoard.subjectID, "NULL") == 0) {
-    printf("Score Board not found!\n");
-    printf("-------------------------------------\n");
+    printf("Score Board not found!\n\n");
+    printf("----------------------------------\n");
     return;
   }
 
@@ -168,8 +168,8 @@ void displayScoreBoard(void) {
     char* fileName = findScoreBoard();
     ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
     if (strcmp(scoreBoard.subjectID, "NULL") == 0) {
-      printf("Score Board not found!\n");
-      printf("-------------------------------------\n");
+      printf("Score Board not found!\n\n");
+      printf("----------------------------------\n");
       return;
     }
     printScoreBoard(scoreBoard);
