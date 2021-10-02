@@ -28,6 +28,7 @@ void addHead(Node* head, Student data) {
   *head = node;
 }
 
+// return 1 if success, 0 if not
 int deleteNode(Node* head, char* studentID) {
   Node tmp = *head;
   Node prev = NULL;
