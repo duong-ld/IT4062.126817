@@ -75,6 +75,13 @@ StudentData* readStudentFromFile(FILE* fp) {
   return student;
 }
 
+void getStringFieldFromFile(FILE* pf, char* field) {
+  fscanf(pf, "%*[^|]s");
+  fgetc(pf);  // get |
+  fscanf(pf, "%[^\n]s", field);
+  fgetc(pf);  // get \n
+}
+
 ScoreBoard readScoreBoardFromFile(char* fileName) {
   ScoreBoard scoreBoard;
   strcpy(scoreBoard.subjectID, "NULL");
@@ -83,31 +90,30 @@ ScoreBoard readScoreBoardFromFile(char* fileName) {
   if (pf == NULL) {
     return scoreBoard;  // return scoreBoard with subjectID = NULL
   }
-
-  fscanf(pf, "%*[^|]s");
-  fgetc(pf);  // get |
-  fscanf(pf, "%[^\n]s", scoreBoard.subjectID);
-  fgetc(pf);  // get \n
-  fscanf(pf, "%[^\n]s", scoreBoard.subjectName);
-  fgetc(pf);  // get \n
+  // get subjectID
+  getStringFieldFromFile(pf, scoreBoard.subjectID);
+  // get subjectName
+  getStringFieldFromFile(pf, scoreBoard.subjectName);
+  // get score rate
   fgetc(pf);  // get F
   fgetc(pf);  // get |
   fscanf(pf, "%d", &scoreBoard.midRate);
   fgetc(pf);  // get |
   fscanf(pf, "%d", &scoreBoard.finalRate);
   fgetc(pf);  // get \n
-  fscanf(pf, "%[^\n]s", scoreBoard.semester);
-  fgetc(pf);  // get \n
+  // get semester
+  getStringFieldFromFile(pf, scoreBoard.semester);
+  // get number of students
   fscanf(pf, "%*[^|]s");
   fgetc(pf);  // get |
   fscanf(pf, "%d", &scoreBoard.numberStudent);
   fgetc(pf);  // get \n
 
-  createList(&scoreBoard.head);
+  createList(&scoreBoard.listStudent);
 
   for (int i = 0; i < scoreBoard.numberStudent; i++) {
     StudentData* studentTmp = readStudentFromFile(pf);
-    addHead(&scoreBoard.head, studentTmp);
+    addHead(&scoreBoard.listStudent, studentTmp);
   }
 
   fclose(pf);
@@ -128,12 +134,12 @@ void printScoreBoardToFile(ScoreBoard scoreBoard, char* fileName) {
   }
 
   fprintf(pf, "SubjectID|%s\n", scoreBoard.subjectID);
-  fprintf(pf, "%s\n", scoreBoard.subjectName);
+  fprintf(pf, "Subject|%s\n", scoreBoard.subjectName);
   fprintf(pf, "F|%d|%d\n", scoreBoard.midRate, scoreBoard.finalRate);
-  fprintf(pf, "%s\n", scoreBoard.semester);
+  fprintf(pf, "Semester|%s\n", scoreBoard.semester);
   fprintf(pf, "StudentCount|%d\n", scoreBoard.numberStudent);
 
-  Node tmp = scoreBoard.head;
+  Node tmp = scoreBoard.listStudent;
   while (tmp != NULL) {
     printStudentToFile(pf, *(tmp->data));
     tmp = tmp->next;
@@ -170,7 +176,7 @@ void exportScoreSummary(ScoreBoard scoreBoard, char* fileName) {
   double sum = 0;
   double grade = 0;  // grade of each student
 
-  Node tmp = scoreBoard.head;
+  Node tmp = scoreBoard.listStudent;
   while (tmp != NULL) {
     grade = calulateScore(tmp->data->midTermScore, tmp->data->finalTermScore,
                           scoreBoard.midRate, scoreBoard.finalRate);

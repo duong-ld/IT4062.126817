@@ -8,11 +8,13 @@
 #ifndef _STUDENTDATA_H_
 #define _STUDENTDATA_H_
 
+#include "constain.h"
+
 typedef struct StudentData StudentData;
 struct StudentData {
-  char studentID[10];
-  char firstName[50];
-  char lastName[50];
+  char studentID[MAX_LENGTH_STUDENT_ID + 1];
+  char firstName[MAX_LENGTH_STUDENT_NAME + 1];
+  char lastName[MAX_LENGTH_STUDENT_NAME + 1];
   double midTermScore;
   double finalTermScore;
   char letterGrade;
@@ -21,6 +23,6 @@ struct StudentData {
 StudentData* EnterStudentData(void);
 void printStudentData(StudentData student);
 
-#endif
+#endif /* _STUDENTDATA_H_ */
 
 

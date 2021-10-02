@@ -1,0 +1,10 @@
+The student with the highest mark is: Luong Duc Duong
+The student with the lowest mark is: Luong ASDF
+The average mark is: 8.10
+
+A histogram of the subject IT1235 is:
+A:*
+B:*
+C:*
+D:
+F:

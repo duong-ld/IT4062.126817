@@ -13,7 +13,7 @@
 int main(int argc, char const* argv[]) {
   MENU:
   printf("Learning Management System\n");
-  printf("-------------------------------------\n");
+  printf("----------------------------------\n");
   printf("\t1. Add a new score board\n");
   printf("\t2. Add score\n");
   printf("\t3. Remove score\n");

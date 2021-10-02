@@ -1,0 +1,8 @@
+SubjectID|IT1235
+Subject|20201
+F|35|65
+Semester|20201
+StudentCount|3
+S|20184049|Nguyen Yen|Chi|10.0|7.5|B|
+S|20180057|Luong Duc|Duong|8.0|9.5|A|
+S|20184567|Luong|ASDF|5.0|8.0|C|

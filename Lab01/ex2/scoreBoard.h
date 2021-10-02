@@ -9,15 +9,16 @@
 #define _SCOREBOARD_H_
 
 #include "linkedList.h"
+#include "constain.h"
 
 typedef struct ScoreBoard {
-  char subjectID[100];
-  char subjectName[100];
+  char subjectID[MAX_LENGTH_STUDENT_ID + 1];
+  char subjectName[MAX_LENGTH_STUDENT_NAME + 1];
   int midRate;
   int finalRate;
-  char semester[100];
+  char semester[MAX_LENGTH_SEMESTER + 1];
   int numberStudent;
-  Node head;
+  Node listStudent;
 } ScoreBoard;
 
 void printScoreBoard(ScoreBoard scoreBoard);
@@ -31,6 +32,6 @@ double calulateScore(double midtermScore,
                   int finalrate);
 void freeScoreBoard(ScoreBoard scoreBoard);
 
-#endif
+#endif /* _SCOREBOARD_H_ */
 
 

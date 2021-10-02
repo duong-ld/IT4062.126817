@@ -18,7 +18,7 @@ void printScoreBoard(ScoreBoard scoreBoard) {
   printf("%s\n", scoreBoard.semester);
   printf("StudentCount|%d\n", scoreBoard.numberStudent);
 
-  Node tmp = scoreBoard.head;
+  Node tmp = scoreBoard.listStudent;
   while (tmp != NULL) {
     printStudentData(*(tmp->data));
     tmp = tmp->next;
@@ -57,5 +57,5 @@ char convertScore(double midtermScore,
 }
 
 void freeScoreBoard(ScoreBoard scoreBoard) {
-  freeList(scoreBoard.head);
+  freeList(scoreBoard.listStudent);
 }

@@ -19,6 +19,6 @@ void printStudentToFile(FILE* pf, StudentData student);
 void printScoreBoardToFile(ScoreBoard scoreBoard, char *fileName);
 void exportScoreSummary(ScoreBoard scoreBoard, char *fileName);
 
-#endif
+#endif /* _FILEFUNC_H_ */
 
 

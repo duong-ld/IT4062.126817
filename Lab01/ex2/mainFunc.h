@@ -14,6 +14,6 @@ void deleteStudentScore(void);
 void searchStudentScore(void);
 void displayScoreBoard(void);
 
-#endif
+#endif /* _MAINFUNC_H_ */
 
 

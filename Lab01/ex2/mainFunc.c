@@ -31,55 +31,40 @@ int acceptContinue(void) {
 
 void addScoreBoard(void) {
   printf("\n------ ADD Score Board ------\n");
-  char subjectID[50] = "\0";
-  char subjectName[50] = "\0";
-  int midrate = 0, finalrate = 0;
-  char semester[50] = "\0";
-  int numberStudent = 0;
+  ScoreBoard scoreBoard;
 
   printf("Enter subject ID: ");
-  scanf("%[^\n]s", subjectID);
+  scanf("%[^\n]s", scoreBoard.subjectID);
   getchar(); // clear buffer
   printf("Enter subject name: ");
-  scanf("%[^\n]s", subjectName);
+  scanf("%[^\n]s", scoreBoard.subjectName);
   getchar(); // clear buffer
   printf("Enter midterm rate: ");
-  scanf("%d", &midrate);
+  scanf("%d", &scoreBoard.midRate);
   getchar(); // clear buffer
   printf("Enter final rate: ");
-  scanf("%d", &finalrate);
+  scanf("%d", &scoreBoard.finalRate);
   getchar(); // clear buffer
   printf("Enter semester: ");
-  scanf("%[^\n]s", semester);
+  scanf("%[^\n]s", scoreBoard.semester);
   getchar(); // clear buffer
   printf("Enter number of student: ");
-  scanf("%d", &numberStudent);
+  scanf("%d", &scoreBoard.numberStudent);
   getchar(); // clear buffer
 
-  // create file
-  char* fileName = makeFileName(subjectID, semester);
-  FILE* pf = fopen(fileName, "w");
-  if (pf == NULL) {
-    printf("Error opening file!\n");
-    exit(1);
-  }
-
-  fprintf(pf, "SubjectID|%s\n", subjectID);
-  fprintf(pf, "Subject|%s\n", subjectName);
-  fprintf(pf, "F|%d|%d\n", midrate, finalrate);
-  fprintf(pf, "Semester|%s\n", semester);
-  fprintf(pf, "StudentCount|%d\n", numberStudent);
-
-  StudentData* temp = NULL;
-  for (int i = 0; i < numberStudent; i++) {
-    temp = EnterStudentData();
+  createList(&scoreBoard.listStudent);
+  for (int i = 0; i < scoreBoard.numberStudent; i++) {
+    StudentData *temp = EnterStudentData();
     temp->letterGrade = convertScore(temp->midTermScore, temp->finalTermScore,
-                                     midrate, finalrate);
-    printStudentToFile(pf, *temp);
-    free(temp);
+                                     scoreBoard.midRate, scoreBoard.finalRate);
+    addHead(&scoreBoard.listStudent, temp);
   }
+
+  // create file
+  char* fileName = makeFileName(scoreBoard.subjectID, scoreBoard.semester);
+  printScoreBoardToFile(scoreBoard, fileName);
   free(fileName);
-  fclose(pf);
+  freeScoreBoard(scoreBoard);
   printf("-------------------------------------\n");
 }
 
@@ -99,9 +84,9 @@ void addStudentScore(void) {
         convertScore(student->midTermScore, student->finalTermScore,
                      scoreBoard.midRate, scoreBoard.finalRate);
     // check if student is already in the list
-    StudentData* check = searchNode(scoreBoard.head, student->studentID);
+    StudentData* check = searchNode(scoreBoard.listStudent, student->studentID);
     if (check == NULL) {
-      addHead(&scoreBoard.head, student);
+      addHead(&scoreBoard.listStudent, student);
       printf("Add student score success\n");
       scoreBoard.numberStudent++;
     } else {
@@ -132,7 +117,7 @@ void deleteStudentScore(void) {
     printf("Enter studentID: ");
     scanf("%s", studentID);
     getchar();
-    check = deleteNode(&scoreBoard.head, studentID);
+    check = deleteNode(&scoreBoard.listStudent, studentID);
 
     if (!check) {
       printf("\nStudentID not found!\n");
@@ -163,7 +148,7 @@ void searchStudentScore(void) {
     printf("Enter studentID: ");
     scanf("%s", studentID);
     getchar();
-    StudentData* student = searchNode(scoreBoard.head, studentID);
+    StudentData* student = searchNode(scoreBoard.listStudent, studentID);
     if (student == NULL) {
       printf("\nStudentID not found!\n");
     } else {

@@ -24,6 +24,6 @@ int deleteNode(Node* head, char* studentID);
 StudentData* searchNode(Node head, char* studentID);
 void freeList(Node head);
 
-#endif
+#endif /* _LINKEDLIST_H_ */
 
 
