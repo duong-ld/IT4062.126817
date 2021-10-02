@@ -3,7 +3,9 @@ CC=gcc
 OBJS=linkedList.o main.o scoreBoard.o mainFunc.o fileFunc.o student.o
 
 $(TARGET): $(OBJS)
-	$(CC) -o $@ $(OBJS)
+	@echo "Linking ..."
+	@$(CC) -o $@ $(OBJS)
+	@echo "Compilation finished."
 
 fileFunc.o mainFunc.o: fileFunc.h
 student.o mainFunc.o student.o: student.h
@@ -12,4 +14,6 @@ scoreBoard.o mainFunc.o: scoreBoard.h
 student.o mainFunc.o main.o fileFunc.o: mainFunc.h
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	@echo "Cleaning ..."
+	@rm -f $(TARGET) $(OBJS)
+	@echo "Cleaned."
