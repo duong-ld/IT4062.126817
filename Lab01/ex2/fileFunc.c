@@ -89,7 +89,7 @@ ScoreBoard readScoreBoardFromFile(char* fileName) {
   FILE* pf = fopen(fileName, "r");
   if (pf == NULL) {
     freeScoreBoard(scoreBoard);
-    return NULL;  // return scoreBoard with subjectID = NULL
+    return NULL;  // return null scoreBoard mean file not found
   }
 
   getStringFieldFromFile(pf, scoreBoard->subjectID);
@@ -125,6 +125,16 @@ ScoreBoard readScoreBoardFromFile(char* fileName) {
 }
 
 void printStudentToFile(FILE* pf, Student student) {
+  if (pf == NULL) {
+    printf("Error: file is NULL\n");
+    return;
+  }
+  
+  if (student == NULL) {
+    printf("Error: student is NULL\n");
+    return;
+  }
+  
   fprintf(pf, "S|%s|%s|%s|%.1lf|%.1lf|%c|\n", student->studentID,
           student->firstName, student->lastName, student->midTermScore,
           student->finalTermScore, student->letterGrade);

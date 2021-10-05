@@ -85,8 +85,8 @@ void addScoreBoard(void) {
 void addStudentScore(void) {
   printf("\n------ Add Student Score ------\n");
   char* fileName = findScoreBoardFile();
-  printf("\n");
   ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
+  printf("\n");
   if (scoreBoard == NULL) {
     printf("Score Board not found!\n\n");
     printf("----------------------------------\n");
@@ -122,8 +122,8 @@ void deleteStudentScore(void) {
   int check = 0;  // check delete success or not
   char studentID[MAX_LENGTH_STUDENT_ID + 1] = "\0";  // student ID to delete
   char* fileName = findScoreBoardFile();
-  printf("\n");
   ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
+  printf("\n");
   if (scoreBoard == NULL) {
     printf("Score Board not found!\n\n");
     printf("----------------------------------\n");
@@ -155,8 +155,8 @@ void searchStudentScore(void) {
   printf("\n------ Search Student Score ------\n");
   char studentID[MAX_LENGTH_STUDENT_ID + 1] = "\0";  // student ID to search
   char* fileName = findScoreBoardFile();
-  printf("\n");
   ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
+  printf("\n");
   if (scoreBoard == NULL) {
     printf("Score Board not found!\n\n");
     printf("----------------------------------\n");
@@ -186,8 +186,8 @@ void displayScoreBoard(void) {
   printf("\n------ Print Score Board ------\n");
   do {
     char* fileName = findScoreBoardFile();
-    printf("\n");
     ScoreBoard scoreBoard = readScoreBoardFromFile(fileName);
+    printf("\n");
     if (scoreBoard == NULL) {
       printf("Score Board not found!\n\n");
       printf("----------------------------------\n");

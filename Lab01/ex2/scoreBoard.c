@@ -51,7 +51,7 @@ char convertScore(double midtermScore,
   double grade =
       calulateScore(midtermScore, finaltermScore, midrate, finalrate);
 
-  if (grade < 0) {
+  if (grade < 0 || grade > 10) {
     printf("Invalid score >> F\n");
     return 'F';
   }

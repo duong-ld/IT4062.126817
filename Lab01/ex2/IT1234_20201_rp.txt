@@ -1,0 +1,10 @@
+The student with the highest mark is: Luong Duc Duong
+The student with the lowest mark is: Le Minh An
+The average mark is: 6.20
+
+A histogram of the subject IT1234 is:
+A:
+B:
+C:**
+D:
+F:
