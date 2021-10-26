@@ -1,4 +1,4 @@
-TARGET=excercise2
+TARGET=exercise2
 CC=gcc
 OBJS=linkedList.o main.o scoreBoard.o mainFunc.o fileFunc.o student.o
 

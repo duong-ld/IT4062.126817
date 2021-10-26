@@ -5,7 +5,7 @@
 
 void makeStrLower(char* str) {
   for (int i = 0; i < strlen(str); i++) {
-    if ('A' < str[i] && str[i] < 'Z') {
+    if ('A' <= str[i] && str[i] <= 'Z') {
       str[i] = str[i] + 32;
     }
   }
@@ -92,7 +92,7 @@ void getEvacuation(char input, char* evacuation) {
 }
 
 void getInput(char* input, int* reverse) {
-  char reverseInput[10];
+  char reverseInput[10] = "\0";
   printf("Enter HAZCHEM code: ");
   scanf("%9s", input);
   makeStrLower(input);
@@ -104,7 +104,7 @@ void getInput(char* input, int* reverse) {
 
   if (input[1] == 's' || input[1] == 't' || input[1] == 'y' ||
       input[1] == 'z') {
-    printf("Is the %c reverse coloured?: ", input[1]);
+    printf("Is the %c reverse coloured?: ", input[1] - 32);
     scanf("%9s", reverseInput);
     makeStrLower(reverseInput);
   } else {
@@ -117,7 +117,7 @@ void getInput(char* input, int* reverse) {
   } else if (strcmp(reverseInput, "no") == 0) {
     *reverse = 0;
   } else {
-    printf("Invalid Reverse input >> NO");
+    printf("Invalid Reverse input >> NO\n");
     *reverse = 0;
   }
 }
@@ -128,7 +128,7 @@ int main(int argc, char const* argv[]) {
   char protection[100] = "\0";
   char containment[100] = "\0";
   char Evacuation[100] = "\0";
-  int reverse;
+  int reverse = 0;
   getInput(input, &reverse);
   getMaterial(input[0], material);
   getReactivity(input[1], reactivity);

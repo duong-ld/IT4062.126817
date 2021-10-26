@@ -129,12 +129,12 @@ void printStudentToFile(FILE* pf, Student student) {
     printf("Error: file is NULL\n");
     return;
   }
-  
+
   if (student == NULL) {
     printf("Error: student is NULL\n");
     return;
   }
-  
+
   fprintf(pf, "S|%s|%s|%s|%.1lf|%.1lf|%c|\n", student->studentID,
           student->firstName, student->lastName, student->midTermScore,
           student->finalTermScore, student->letterGrade);

@@ -22,7 +22,7 @@ void clearSTDIN(void) {
 
 int acceptContinue(void) {
   char answer = '\0';
-  printf("\nDo you want to continue? (y/n): ");
+  printf("(y/n): ");
 
   scanf("%c", &answer);
   clearSTDIN();
@@ -36,49 +36,53 @@ int acceptContinue(void) {
 
 void addScoreBoard(void) {
   printf("\n------ ADD Score Board ------\n");
-  ScoreBoard scoreBoard = createScoreBoard();
+  do {
+    ScoreBoard scoreBoard = createScoreBoard();
 
-  printf("Enter subject ID: ");
-  scanf("%[^\n]s", scoreBoard->subjectID);
-  clearSTDIN();
-  printf("Enter subject name: ");
-  scanf("%[^\n]s", scoreBoard->subjectName);
-  clearSTDIN();
-  printf("Enter midterm rate: ");
-  scanf("%d", &scoreBoard->midRate);
-  clearSTDIN();
-  printf("Enter final rate: ");
-  scanf("%d", &scoreBoard->finalRate);
-  clearSTDIN();
-  printf("Enter semester: ");
-  scanf("%[^\n]s", scoreBoard->semester);
-  clearSTDIN();
-  printf("Enter number of student: ");
-  scanf("%d", &scoreBoard->numberStudent);
-  clearSTDIN();
+    printf("Enter subject ID: ");
+    scanf("%[^\n]s", scoreBoard->subjectID);
+    clearSTDIN();
+    printf("Enter subject name: ");
+    scanf("%[^\n]s", scoreBoard->subjectName);
+    clearSTDIN();
+    printf("Enter midterm rate: ");
+    scanf("%d", &scoreBoard->midRate);
+    clearSTDIN();
+    printf("Enter final rate: ");
+    scanf("%d", &scoreBoard->finalRate);
+    clearSTDIN();
+    printf("Enter semester: ");
+    scanf("%[^\n]s", scoreBoard->semester);
+    clearSTDIN();
+    printf("Enter number of student: ");
+    scanf("%d", &scoreBoard->numberStudent);
+    clearSTDIN();
 
-  initList(&scoreBoard->listStudent);
-  for (int i = 0; i < scoreBoard->numberStudent; i++) {
-    Student temp = EnterStudentData();
-    temp->letterGrade =
-        convertScore(temp->midTermScore, temp->finalTermScore,
-                     scoreBoard->midRate, scoreBoard->finalRate);
+    initList(&scoreBoard->listStudent);
+    for (int i = 0; i < scoreBoard->numberStudent; i++) {
+      Student temp = EnterStudentData();
+      temp->letterGrade =
+          convertScore(temp->midTermScore, temp->finalTermScore,
+                       scoreBoard->midRate, scoreBoard->finalRate);
 
-    Student check = searchNode(scoreBoard->listStudent, temp->studentID);
-    if (check == NULL) {
-      addHead(&scoreBoard->listStudent, temp);
-      printf("Add student no.%d: %s success\n", i + 1, temp->studentID);
-    } else {
-      printf("\nStudent ID: %s already exists!\n", temp->studentID);
-      free(temp);
-      i--;
+      Student check = searchNode(scoreBoard->listStudent, temp->studentID);
+      if (check == NULL) {
+        addHead(&scoreBoard->listStudent, temp);
+        printf("Add student no.%d: %s success\n", i + 1, temp->studentID);
+      } else {
+        printf("\nStudent ID: %s already exists!\n", temp->studentID);
+        free(temp);
+        i--;
+      }
     }
-  }
 
-  char* fileName = makeFileName(scoreBoard->subjectID, scoreBoard->semester);
-  printScoreBoardToFile(scoreBoard, fileName);
-  free(fileName);
-  freeScoreBoard(scoreBoard);
+    char* fileName = makeFileName(scoreBoard->subjectID, scoreBoard->semester);
+    printScoreBoardToFile(scoreBoard, fileName);
+    free(fileName);
+    freeScoreBoard(scoreBoard);
+
+    printf("\nDo you want to add more scoreboards? ");
+  } while (acceptContinue());
   printf("----------------------------------\n");
 }
 
@@ -109,6 +113,8 @@ void addStudentScore(void) {
       printf("\nStudent ID: %s already exists!\n", student->studentID);
       free(student);
     }
+
+    printf("\nDo you want to add more students to this scoreboard? ");
   } while (acceptContinue());
 
   printScoreBoardToFile(scoreBoard, fileName);
@@ -143,6 +149,8 @@ void deleteStudentScore(void) {
       printf("\nStudentID %s deleted!\n", studentID);
       scoreBoard->numberStudent--;
     }
+
+    printf("\nDo you want to delete more students from this scoreboard? ");
   } while (acceptContinue());
 
   printScoreBoardToFile(scoreBoard, fileName);
@@ -175,6 +183,8 @@ void searchStudentScore(void) {
       printf("\nStudentID %s found!\n", studentID);
       printStudentData(student);
     }
+
+    printf("\nDo you want to search more students from this scoreboard? ");
   } while (acceptContinue());
 
   freeScoreBoard(scoreBoard);
@@ -200,6 +210,8 @@ void displayScoreBoard(void) {
     free(reportFile);
     freeScoreBoard(scoreBoard);
     free(fileName);
+
+    printf("\nDo you want to print more scoreboards? ");
   } while (acceptContinue());
   printf("\n----------------------------------\n");
 }
