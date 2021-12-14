@@ -1,7 +1,6 @@
 #ifndef _SERVER_FUNC_H
 #define _SERVER_FUNC_H
 
-
 int hanlde_message(char*, int, int);
 int registerUser(char*, int);
 int loginUser(char*, int);

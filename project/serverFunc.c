@@ -68,8 +68,11 @@ int registerUser(char* message, int socket) {
   char username[100] = "\0";
   char password[100] = "\0";
   char serverMess[100] = "\0";
+  char name[100] = "\0";
   char* token;
   token = strtok(message, "|");
+  token = strtok(NULL, "|");
+  strcpy(name, token);
   token = strtok(NULL, "|");
   strcpy(username, token);
   token = strtok(NULL, "|");
@@ -78,15 +81,18 @@ int registerUser(char* message, int socket) {
 
   char query[200] = "\0";
 
-  sprintf(query, "INSERT INTO users (username, password) VALUES ('%s', '%s')",
-          username, password);
+  sprintf(
+      query,
+      "INSERT INTO users (name, username, password) VALUES ('%s', '%s', '%s')",
+      name, username, password);
+
   if (mysql_query(con, query)) {
     sprintf(serverMess, "%d|F|%s\n", REGISTER, mysql_error(con));
     send(socket, serverMess, strlen(serverMess), 0);
     return 0;
   }
   char server_message[100] = "\0";
-  sprintf(server_message, "%d|S|Successfully registered\n", REGISTER);
+  sprintf(server_message, "%d|S|Successfully registered %s\n", REGISTER, name);
   send(socket, server_message, sizeof(server_message), 0);
   return 1;
 }
@@ -127,8 +133,9 @@ int loginUser(char* message, int socket) {
 void encryptPassword(char* password) {
   int encrypt = 0;
   for (int i = 0; i < strlen(password); i++) {
-    if ((int)password[i] > i) {
+    if ((password[i] - i >= '0' && password[i] - i <= '9') ||
+        (password[i] - i >= 'a' && password[i] - i <= 'z') ||
+        (password[i] - i >= 'A' && password[i] - i <= 'Z'))
       password[i] = password[i] - i;
-    }
   }
 }

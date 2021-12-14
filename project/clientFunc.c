@@ -34,11 +34,19 @@ void getString(char* label, char* des) {
   getchar();
 }
 
-void createMessage(char* buffer, int type, char* data1, char* data2) {
+// login: type/username/password
+// register: type/user/pass/re_password
+void createMessage(char* buffer,
+                   int type,
+                   char* data1,
+                   char* data2,
+                   char* data3) {
   switch (type) {
     case LOGIN:
-    case REGISTER:
       sprintf(buffer, "%d|%s|%s", type, data1, data2);
+      break;
+    case REGISTER:
+      sprintf(buffer, "%d|%s|%s|%s", type, data1, data2, data3);
       break;
     case LOGOUT:
       sprintf(buffer, "%d", type);
@@ -105,7 +113,7 @@ int login(int network_socket, int state) {
   }
   getString("Enter your password: ", password);
   // send data to the server
-  createMessage(buffer, LOGIN, username, password);
+  createMessage(buffer, LOGIN, username, password, NULL);
   sent_status = send(network_socket, buffer, sizeof(buffer), 0);
   if (sent_status == -1) {
     printf("The data has error\n\n");
@@ -119,18 +127,22 @@ int login(int network_socket, int state) {
     return login(network_socket, state);
   }
 }
+
 int signup(int network_socket, int state) {
   printf("\n----------- Register --------------\n");
   char username[256] = "\0";
   char password[256] = "\0";
+  char name[256] = "\0";
   char re_password[256] = "\0";
   char buffer[256] = "\0";
   char response[256] = "\0";
   int sent_status = 0;
-  getString("Enter your username: ", username);
-  if (strcmp(username, "q") == 0) {
+  getString("Enter your name: ", name);
+  if (strcmp(name, "q") == 0) {
     return NOT_AUTH;
   }
+  getString("Enter your username: ", username);
+
   getString("Enter your password: ", password);
   getString("Re-enter your password: ", re_password);
 
@@ -139,7 +151,7 @@ int signup(int network_socket, int state) {
     return signup(network_socket, state);
   }
 
-  createMessage(buffer, REGISTER, username, password);
+  createMessage(buffer, REGISTER, name, username, password);
   sent_status = send(network_socket, buffer, sizeof(buffer), 0);
   if (sent_status == -1) {
     printf("The data has error\n\n");
@@ -153,12 +165,13 @@ int signup(int network_socket, int state) {
     return signup(network_socket, state);
   }
 }
+
 int logout(int network_socket, int state) {
-	printf("\n----------- Logout --------------\n");
+  printf("\n----------- Logout --------------\n");
   char buffer[256] = "\0";
   char response[256] = "\0";
   int sent_status = 0;
-  createMessage(buffer, LOGOUT, NULL, NULL);
+  createMessage(buffer, LOGOUT, NULL, NULL, NULL);
   sent_status = send(network_socket, buffer, sizeof(buffer), 0);
   if (sent_status == -1) {
     printf("The data has error\n\n");

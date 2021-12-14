@@ -4,7 +4,7 @@
 int getUserChoice(int);
 void getString(char*, char*);
 int extractServerMessage(char*, int);
-void createMessage(char*, int, char*, char*);
+void createMessage(char*, int, char*, char*, char*);
 
 int login(int, int);
 int signup(int, int);
