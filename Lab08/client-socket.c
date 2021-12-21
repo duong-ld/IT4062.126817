@@ -6,15 +6,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "clientFunc.h"
-#include "constain.h"
-
-#define PORT 5550
-
 int main(int argc, const char* argv[]) {
-  int state = NOT_AUTH;
   // create a socket
   int network_socket;
+  int PORT = 5550;
   network_socket = socket(AF_INET, SOCK_STREAM, 0);
 
   // specify an address for the socket
@@ -31,46 +26,37 @@ int main(int argc, const char* argv[]) {
     printf("The connection has error\n\n");
   }
 
-  int continuer = 1;
-
   if (connection_status == 0) {
     char response[256] = "\0";
     // receive data from the server
     recv(network_socket, &response, sizeof(response), 0);
     printf("%s\n", response);
-    int sent_status = 0;
+    // total data sent to the server
+    int total_sent = 0;
 
-    while (continuer) {
-      // print menu
-      int choice = getUserChoice(state);
+    while (1) {
+      printf("enter a message to echo\n");
+      scanf("%[^\n]s", response);
+      getchar();
 
-      switch (choice) {
-        case LOGIN:
-          state = login(network_socket, state);
-          break;
+      int send_status = send(network_socket, response, strlen(response), 0);
+      total_sent += send_status;
 
-        case REGISTER:
-          state = signup(network_socket, state);
-          break;
-
-        case LOGOUT:
-          state = logout(network_socket, state);
-          break;
-
-        case JOIN_GAME:
-          printf("This feature will be available soon\n");
-          break;
-
-        case EXIT:
-        default:
-          // send q or Q to disconnect
-          sent_status = send(network_socket, "q", sizeof("q"), 0);
-          if (sent_status == -1) {
-            printf("The data has error\n\n");
-          }  // check for sent_status
-          continuer = 0;
-          break;
+      if (strcmp(response, "q") == 0 || strcmp(response, "Q") == 0) {
+        printf("The total data sent to the server is %d\n\n", total_sent);
+        break;
       }
+
+      memset(response, 0, sizeof(response));
+
+      int recv_status = recv(network_socket, &response, sizeof(response), 0);
+      response[recv_status] = '\0';
+      // print out the server's response
+      printf("Here is the echo message from the server: %s\n\n", response);
     }
   }
+  // close the socket
+  close(network_socket);
+
+  return 0;
 }

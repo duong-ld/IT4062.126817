@@ -1,7 +1,6 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <libgen.h>
-#include <mysql/mysql.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -12,14 +11,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define PORT 9999
 #define BACKLOG 20
 #define BUFF_SIZE 1024
-
-#include "constain.h"
-#include "serverFunc.h"
-
-MYSQL* con;
 
 /* Handler process signal*/
 void sig_chld(int signo);
@@ -29,23 +22,18 @@ void sig_chld(int signo);
  * [IN] sockfd: socket descriptor that connects to client
  */
 void echo(int sockfd);
-
-// Remember to use -pthread when compiling this server's source code
-void* connection_handler(void*);
+void toUpperCase(char* str);
+void recvAndSendFile(int sockfd);
+void normalizeFile(char* filename);
 
 int main(int argc, char* argv[]) {
-  con = mysql_init(NULL);
+	if (argc != 2) {
+		fprintf(stderr, "Usage: %s <port>\n", basename(argv[0]));
+		exit(EXIT_FAILURE);
+	}
+	int PORT = atoi(argv[1]);
 
-  if (con == NULL) {
-    fprintf(stderr, "%s\n", mysql_error(con));
-    exit(1);
-  }
-
-  if (mysql_real_connect(con, "localhost", "root", "", "testdb", 0, NULL, 0) ==
-      NULL) {
-    finish_with_error(con);
-  }
-
+	
   int listen_sock, conn_sock; /* file descriptors */
   struct sockaddr_in server;  /* server's address information */
   struct sockaddr_in client;  /* client's address information */
@@ -106,7 +94,6 @@ int main(int argc, char* argv[]) {
     close(conn_sock);
   }
   close(listen_sock);
-  mysql_close(con);
   return 0;
 }
 
@@ -119,9 +106,10 @@ void sig_chld(int signo) {
     printf("\nChild %d terminated\n", pid);
 }
 
+// recv file from client -> convert to uppercase -> send to client
 void echo(int sockfd) {
   char buff[BUFF_SIZE];
-  int bytes_received;
+  int bytes_sent, bytes_received;
 
   // recv file name
   bytes_received = recv(sockfd, buff, BUFF_SIZE, 0);
@@ -129,9 +117,69 @@ void echo(int sockfd) {
     perror("recv: ");
     return;
   }
-  buff[bytes_received] = '\0';
-  printf("%s\n", buff);
-  hanlde_message(buff, sockfd);
 
+  buff[bytes_received] = '\0';
+  normalizeFile(buff);
+  char* fileName = basename(buff);
+  fileName[strlen(fileName)] = '\0';
+
+  // convert file name to uppercase and send to client
+  toUpperCase(fileName);
+  bytes_sent = send(sockfd, fileName, strlen(fileName), 0);
+  if (bytes_sent < 0) {
+    perror("send: ");
+    return;
+  }
+  // recv file from client and send to client
+  recvAndSendFile(sockfd);
   close(sockfd);
+}
+
+// recv file from client in text format and convert to upper case
+void recvAndSendFile(int sockfd) {
+  int bytes_sent, bytes_received;
+  char buff[BUFF_SIZE];
+  while (1) {
+    bytes_received = recv(sockfd, buff, BUFF_SIZE, 0);
+    if (bytes_received < 0) {
+      perror("recv");
+      return;
+    } else if (bytes_received == 0) {
+      printf("\nClient disconnected\n");
+      break;
+    }
+    buff[bytes_received] = '\0';
+    toUpperCase(buff);
+    bytes_sent = send(sockfd, buff, strlen(buff), 0);
+    if (bytes_sent < 0) {
+      perror("\nError: ");
+      return;
+    }
+  }
+}
+
+// convert string to upper case
+void toUpperCase(char* str) {
+  int i;
+  for (i = 0; i < strlen(str); i++) {
+    if (str[i] >= 'a' && str[i] <= 'z')
+      str[i] -= 32;
+    if (str[i] == '\n') {
+      str[i + 1] = '\0';
+      break;
+    }
+  }
+}
+
+void normalizeFile(char* filename) {
+  for (int i = 0; i < strlen(filename); i++) {
+    if ((filename[i] >= 'a' && filename[i] <= 'z') ||
+        (filename[i] >= 'A' && filename[i] <= 'Z') || filename[i] == '.' ||
+        filename[i] == '/') {
+      continue;
+    } else {
+      filename[i] = '\0';
+      break;
+    }
+  }
 }

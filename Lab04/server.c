@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
     perror("\nError: ");
     exit(0);
   }
+  
+
 
 // set role for client
 SET_ROLE:

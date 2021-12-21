@@ -8,31 +8,28 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PORT 5550
-
-#include "constain.h"
-#include "serverFunc.h"
-
 MYSQL* con;
 
 // Remember to use -pthread when compiling this server's source code
 void* connection_handler(void*);
+int convert_message(char*);
+void finish_with_error(MYSQL* con);
 
 int main() {
   con = mysql_init(NULL);
-
   if (con == NULL) {
     fprintf(stderr, "%s\n", mysql_error(con));
     exit(1);
   }
 
-  if (mysql_real_connect(con, "localhost", "root", "", "testdb", 0, NULL, 0) ==
-      NULL) {
+  if (mysql_real_connect(con, "localhost", "user12", "34klq*", "testdb", 0,
+                         NULL, 0) == NULL) {
     finish_with_error(con);
   }
 
   char server_message[100] = "Hello from Server!!\n";
   int server_socket;
+  int PORT = 5550;
   server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
   if (server_socket == -1) {
@@ -87,12 +84,11 @@ int main() {
   // int send_status;
   // send_status=send(client_socket, server_message, sizeof(server_message), 0);
   close(server_socket);
-  mysql_close(con);
+
   return 0;
 }
 
 void* connection_handler(void* client_socket) {
-  int state = NOT_AUTH;
   int socket = *(int*)client_socket;
   int read_len = 0;
   char server_message[100] = "Hello from server\n";
@@ -107,9 +103,35 @@ void* connection_handler(void* client_socket) {
       break;
     }
 
-    state = hanlde_message(client_message, socket, state);
+    int check = convert_message(client_message);
+    if (check == 1)
+      send_status = send(socket, client_message, strlen(client_message), 0);
+    else
+      send_status =
+          send(socket, "Wrong text format\0", strlen("Wrong text format\0"), 0);
 
     memset(client_message, 0, sizeof(client_message));
   }
+
   return 0;
+}
+
+int convert_message(char* message) {
+  int check = 1;
+  for (int i = 0; i < strlen(message); i++) {
+    if ('a' <= message[i] && message[i] <= 'z') {
+      message[i] = message[i] - 'a' + 'A';
+    } else if ('A' <= message[i] && message[i] <= 'Z') {
+      continue;
+    } else {
+      check = 0;
+    }
+  }
+  return check;
+}
+
+void finish_with_error(MYSQL* con) {
+  fprintf(stderr, "%s\n", mysql_error(con));
+  mysql_close(con);
+  exit(1);
 }
