@@ -59,10 +59,11 @@ int main(int argc, char const* argv[]) {
     exit(1);
   }
 
-  if (mysql_query(con,
-                  "CREATE TABLE products(id INT PRIMARY KEY AUTO_INCREMENT, "
-                  "name VARCHAR(255) UNIQUE,  VARCHAR(255), quantity INT, "
-                  "price INT)")) {
+  if (mysql_query(
+          con,
+          "CREATE TABLE products(id INT PRIMARY KEY AUTO_INCREMENT, "
+          "product_name VARCHAR(255) UNIQUE, manufacturer VARCHAR(255), "
+          "price DOUBLE)")) {
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);
     exit(1);
