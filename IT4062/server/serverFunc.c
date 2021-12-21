@@ -30,11 +30,126 @@ void hanlde_message(char* message, int socket) {
     case REGISTER:
       registerUser(message, socket);
       break;
+    case QUESTION:
+      question(message, socket);
+      break;
+    case SPECIAL_QUESTION:
+      special_question(message, socket);
+      break;
     case LOGOUT:
       break;
     default:
       break;
   }
+}
+
+/**
+ * @brief get information of product from database convert to question, send to
+ * client
+ * @param message message from client
+ * @param socket socket of client
+ * @return void
+ * @author Luong Duong
+ *
+ */
+void question(char* message, int socket) {
+  char server_message[100] = "\0";
+  char product_name[100] = "\0";
+  char manufacturer[100] = "\0";
+  double price = 0;
+  int quantity = 0;
+  char query[100] = "\0";
+
+  // get total product in database
+  sprintf(query, "SELECT COUNT(*) FROM products");
+  if (mysql_query(con, query)) {
+    finish_with_error(con);
+  }
+  MYSQL_RES* result = mysql_store_result(con);
+  if (result == NULL) {
+    finish_with_error(con);
+  }
+  MYSQL_ROW row = mysql_fetch_row(result);
+  int total_product = atoi(row[0]);
+  // get random product
+  int random_product = rand() % total_product;
+  sprintf(query, "SELECT * FROM products LIMIT %d, 1", random_product);
+  if (mysql_query(con, query)) {
+    finish_with_error(con);
+  }
+  result = mysql_store_result(con);
+  if (result == NULL) {
+    finish_with_error(con);
+  }
+  row = mysql_fetch_row(result);
+  strcpy(product_name, row[1]);
+  strcpy(manufacturer, row[2]);
+  price = atof(row[3]);
+  quantity = rand() % 10 + 1;
+  // convert to question
+  sprintf(server_message, "%d|What is the price of %d %s's %s|%f|%f", QUESTION,
+          quantity, manufacturer, product_name, price * quantity,
+          (price * quantity) * 1.05);
+  // send to client
+  send(socket, server_message, strlen(server_message), 0);
+}
+
+/**
+ * @brief get information of list products from database convert to question,
+ * send to client
+ * @param message message from client
+ * @param socket socket of client
+ * @return void
+ * @author Luong Duong
+ *
+ */
+void special_question(char* message, int socket) {
+  char server_message[100] = "\0";
+  char product_name[100] = "\0";
+  char manufacturer[100] = "\0";
+  double price = 0;
+  double total_price = 0;
+  int quantity = 0;
+  char query[100] = "\0";
+  int total_product = 0;
+
+  // get total product in database
+  sprintf(query, "SELECT COUNT(*) FROM products");
+  if (mysql_query(con, query)) {
+    finish_with_error(con);
+  }
+  MYSQL_RES* result = mysql_store_result(con);
+  if (result == NULL) {
+    finish_with_error(con);
+  }
+  MYSQL_ROW row = mysql_fetch_row(result);
+  total_product = atoi(row[0]);
+  // get 5 random product, convert to 1 question
+  char question[500] = "For a list of the following products:\n";
+  for (int i = 0; i < 5; i++) {
+    char temp[100] = "\0";
+    int random_product = rand() % total_product;
+    sprintf(query, "SELECT * FROM products LIMIT %d, 1", random_product);
+    if (mysql_query(con, query)) {
+      finish_with_error(con);
+    }
+    result = mysql_store_result(con);
+    if (result == NULL) {
+      finish_with_error(con);
+    }
+    row = mysql_fetch_row(result);
+    strcpy(product_name, row[1]);
+    strcpy(manufacturer, row[2]);
+    price = atof(row[3]);
+    quantity = rand() % 10 + 1;
+    total_price += price * quantity;
+    // convert to question
+    sprintf(temp, " - %d %s's %s\n", quantity, manufacturer, product_name);
+    strcat(question, temp);
+  }
+  strcat(question, "What is the price of all of these products?");
+  // convert to question
+  sprintf(server_message, "%d|%s|%f", SPECIAL_QUESTION, question, total_price);
 }
 
 void registerUser(char* message, int socket) {

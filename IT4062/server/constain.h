@@ -14,7 +14,11 @@ enum {
   REGISTER = 2,
   LOGOUT = 3,
   JOIN_GAME = 4,
-  EXIT = 5,
+  QUESTION = 5,
+  SPECIAL_QUESTION = 6,
+  ANSWER = 7,
+  LEAVE_GAME = 8,
+  EXIT = 9,
 };
 
 #endif  // _CONSTAIN_H_
